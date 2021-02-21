@@ -39,6 +39,7 @@ jobs:
           new_version=v${{ steps.bump_version.outputs.next-version }}
           git checkout -b release/${new_version}
           git push origin release/${new_version}
+          git log --merges --pretty=format:'%s (@%an)' --date=relative main...release/${new_version}
       - name: Create History
         run: |
           new_version=v${{ steps.bump_version.outputs.next-version }}

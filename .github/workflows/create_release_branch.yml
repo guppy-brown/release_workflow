@@ -50,7 +50,7 @@ jobs:
         run: |
           release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           hub pull-request \
-              -b master \
+              -b main \
               -h ${release_branch} \
               -m "[WIP] relase v${{ steps.bump_version.outputs.next-version }}"
               -m "## Command Result\n${steps.create_history.outpus.log}"

@@ -52,6 +52,8 @@ jobs:
           hub pull-request \
               --base main \
               --head ${release_branch} \
+              --reviewer guppy-brown \
+              --assign guppy-brown \
               --labels release \
               --message "[WIP] relase v${{ steps.bump_version.outputs.next-version }}" \
               --message "## Executed command" \

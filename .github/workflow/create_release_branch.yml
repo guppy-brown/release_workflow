@@ -1,0 +1,16 @@
+name: Create Release Branch
+
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * 5'
+
+job:
+  create_release_branch:
+    runs-on: ubuntu-latest
+    step:
+      - uses: actions/checkout@v2
+        with:
+          ref: develop
+          fetch-depth: 0
+        

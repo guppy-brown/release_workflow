@@ -55,7 +55,7 @@ jobs:
               --labels release \
               --message "[WIP] relase v${{ steps.bump_version.outputs.next-version }}" \
               --message "## Executed command" \
-              --message "`git log --merges --pretty=format:'%s (@%an)' --date=relative main...${release_branch}`"
+              --message "`git log --merges --pretty=format:'%s (@%an)' --date=relative main...${release_branch}`" \
               --message "## Command result" \
               --message "${{ steps.create_history.outputs.log }}"
         env:

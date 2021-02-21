@@ -17,7 +17,7 @@ jobs:
       - name: Get current version
         id: get_cur_ver
         run: |
-          ver=ver=`git tag --sort=-v:refname | head -n 1 | cut -d"v" -f2`
+          ver=`git tag --sort=-v:refname | head -n 1 | cut -d"v" -f2`
           echo "::set-output name=version::${ver}"
       - name: Bump version
         id: bunp_version

@@ -54,7 +54,7 @@ jobs:
               --head ${release_branch} \
               --reviewer guppy-brown \
               --assign guppy-brown \
-              --labels release \
+              --labels ":rocket: release" \
               --message "Release/v${{ steps.bump_version.outputs.next-version }}" \
               --message "## Executed command" \
               --message "\`git log --merges --pretty=format:'%s (@%an)' --date=relative main...${release_branch}\`" \

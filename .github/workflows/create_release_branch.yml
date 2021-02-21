@@ -50,9 +50,9 @@ jobs:
         run: |
           release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           hub pull-request \
-              -b main \
-              -h ${release_branch} \
-              -m "[WIP] relase v${{ steps.bump_version.outputs.next-version }}"
-              -m "## Command Result\n${{ steps.create_history.outpus.log }}"
+              --base main \
+              --head ${release_branch} \
+              --message "[WIP] relase v${{ steps.bump_version.outputs.next-version }}" \
+              --message "## Command Result\n${{ steps.create_history.outpus.log }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

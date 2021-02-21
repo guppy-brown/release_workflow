@@ -53,6 +53,7 @@ jobs:
               --base main \
               --head ${release_branch} \
               --message "[WIP] relase v${{ steps.bump_version.outputs.next-version }}" \
-              --message "## Command Result\n${{ steps.create_history.outpus.log }}"
+              --message "## Command Result" \
+              --message "{{ steps.create_history.outputs.log }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

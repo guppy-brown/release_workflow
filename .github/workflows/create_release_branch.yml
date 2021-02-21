@@ -36,13 +36,20 @@ jobs:
           version-fragment: 'feature'
       - name: Create Release Branch
         run: |
-          new_version=v${{ steps.bump_version.outputs.next-version }}
-          git checkout -b release/${new_version}
-          git push origin release/${new_version}
+          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
+          git checkout -b ${release_branch}
+          git push origin ${release_branch}
       - name: Create History
+        id: create_history
         run: |
-          new_version=v${{ steps.bump_version.outputs.next-version }}
+          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           git checkout -b main origin/main
-          git log --merges --pretty=format:'%s (@%an)' --date=relative main...release/${new_version}
-          log=`git log --merges --pretty=format:'%s (@%an)' --date=relative "main...release/${new_version}"`
-          echo ${log}
+          log=`git log --merges --pretty=format:'%s (@%an)' --date=relative "main...${release_branch}"`
+          echo "::set-output name=log::${log}"
+      - name: Create Pull Request
+        run: |
+          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
+          hub pull-request \
+              -b master \
+              -h ${release_branch} \
+              -m "relase v${{ steps.bump_version.outputs.next-version }}\n\n${steps.create_history.outpus.log}"

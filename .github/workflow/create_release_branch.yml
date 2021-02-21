@@ -3,6 +3,7 @@ name: Create Release Branch
 on: 
   workflow_dispatch:
   schedule:
+  # every friday at AM11:00
     - cron: '0 2 * * 5'
 
 job:

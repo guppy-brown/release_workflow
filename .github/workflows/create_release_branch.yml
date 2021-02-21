@@ -52,4 +52,5 @@ jobs:
           hub pull-request \
               -b master \
               -h ${release_branch} \
-              -m "relase v${{ steps.bump_version.outputs.next-version }}\n\n${steps.create_history.outpus.log}"
+              -m "[WIP] relase v${{ steps.bump_version.outputs.next-version }}"
+              -m "## Command Result\n${steps.create_history.outpus.log}"

@@ -20,7 +20,7 @@ jobs:
           ver=`git tag --sort=-v:refname | head -n 1 | cut -d"v" -f2`
           echo "::set-output name=version::${ver}"
       - name: Bump version
-        id: bunp_version
+        id: bump_version
         uses: christian-draeger/increment-semantic-version@1.0.2
         with:
           current-version: ${{ steps.get_cur_ver.outputs.version }}

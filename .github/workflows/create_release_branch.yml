@@ -6,12 +6,11 @@ on:
   # every friday at AM11:00
     - cron: '0 2 * * 5'
 
-job:
+jobs:
   create_release_branch:
     runs-on: ubuntu-latest
-    step:
+    steps:
       - uses: actions/checkout@v2
         with:
           ref: develop
           fetch-depth: 0
-        

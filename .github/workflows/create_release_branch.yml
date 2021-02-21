@@ -52,8 +52,11 @@ jobs:
           hub pull-request \
               --base main \
               --head ${release_branch} \
+              --label "release"
               --message "[WIP] relase v${{ steps.bump_version.outputs.next-version }}" \
-              --message "## Command Result" \
+              --message "## Executed command" \
+              --message "`git log --merges --pretty=format:'%s (@%an)' --date=relative main...${release_branch}`"
+              --message "## Command result" \
               --message "${{ steps.create_history.outputs.log }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -15,7 +15,7 @@ jobs:
           ref: develop
           fetch-depth: 0
       - name: Setup git config
-        ENV:
+        env:
           USER_NAME: "GitHub Actions"
           USER_MAIL: noreply@github.com
         run: |

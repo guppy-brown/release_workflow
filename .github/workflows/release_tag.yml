@@ -40,7 +40,7 @@ jobs:
           release_name: ${{ steps.get_version.outputs.version }}
           body: |+
             ## Executed command
-            \`${{ steps.create_history.outputs.cmd }}\`
+            `${{ steps.create_history.outputs.cmd }}`
             ## Command result
             ${{ steps.create_history.outputs.log }}
           draft: false

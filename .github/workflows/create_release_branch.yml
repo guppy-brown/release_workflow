@@ -18,16 +18,11 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
-      - name: Install hub command
-        run: |
-          wget https://github.com/github/hub/releases/download/v2.14.2/hub-linux-amd64-2.14.2.tgz
-          tar xzf hub-linux-amd64-2.14.2.tgz
-          sudo ./hub-linux-amd64-2.14.2/install
       - name: Get current version
         id: get_cur_ver
         run: |
-          ver=`git tag --sort=-v:refname | head -n 1 | cut -d"v" -f2`
-          echo "::set-output name=version::${ver}"
+          ver=`git tag --sort=-v:refname | head -n 1`
+          echo "::set-output name=version::${ver#v}"
       - name: Bump version
         id: bump_version
         uses: christian-draeger/increment-semantic-version@1.0.2
@@ -44,7 +39,9 @@ jobs:
         run: |
           release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           git checkout -b main origin/main
-          log=`git log --merges --pretty=format:'%s (@%an)' --date=relative "main...${release_branch}"`
+          cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"main...${release_branch}\""
+          log=`eval ${cmd}`
+          echo "::set-output name=cmd::${cmd}"
           echo "::set-output name=log::${log}"
       - name: Create Pull Request
         run: |
@@ -55,10 +52,12 @@ jobs:
               --reviewer guppy-brown \
               --assign guppy-brown \
               --labels ":rocket: release" \
-              --message "Release/v${{ steps.bump_version.outputs.next-version }}" \
+              --message "Release/${{ steps.bump_version.outputs.next-version }}" \
               --message "## Executed command" \
-              --message "\`git log --merges --pretty=format:'%s (@%an)' --date=relative main...${release_branch}\`" \
+              --message "\`${{ steps.create_history.outputs.cmd }}\`" \
               --message "## Command result" \
               --message "${{ steps.create_history.outputs.log }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+

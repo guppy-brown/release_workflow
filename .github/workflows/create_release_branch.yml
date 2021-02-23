@@ -27,7 +27,7 @@ jobs:
         id: bump_version
         uses: christian-draeger/increment-semantic-version@1.0.2
         with:
-          current-version: ${${{ steps.get_cur_ver.outputs.version }}#v}
+          current-version: ${{ steps.get_cur_ver.outputs.version#v }}
           version-fragment: 'feature'
       - name: Create Release Branch
         run: |

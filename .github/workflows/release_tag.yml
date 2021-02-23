@@ -16,7 +16,7 @@ jobs:
         id: get_version
         run: |
           release_branch=${{ github.event.pull_request.head.ref }}
-          echo ::set-output name=version::${HEAD_REF#release/}
+          echo ::set-output name=version::${release_branch#release/}
       - name: Create History
         id: create_history
         run: |

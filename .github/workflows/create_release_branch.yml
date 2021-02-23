@@ -75,7 +75,8 @@ jobs:
             {
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                text: `Created release PR! <${{ steps.create_pull_request.outputs.url }}|Click here>`
+                text: `Created release PR! <${{ steps.create_pull_request.outputs.url }}|Click here>`,
+              }]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

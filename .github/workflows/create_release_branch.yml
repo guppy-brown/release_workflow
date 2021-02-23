@@ -43,7 +43,7 @@ jobs:
         env:
           RELEASE_BRANCH: release/v${{ steps.bump_version.outputs.next-version }}
         run: |
-          git fetch origin main
+          git branch main origin/main
           cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"main...${RELEASE_BRANCH}\""
           log=`eval ${cmd}`
           echo "::set-output name=cmd::${cmd}"

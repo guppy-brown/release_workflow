@@ -76,7 +76,7 @@ jobs:
             {
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                text: '${{ job.status }}' === 'success' ? 'good' : `Created release PR! <https://google.co.jp|Click here>` : `Failed`
+                text: '${{ job.status }}' === 'success' ? 'good' : `Created release PR! <https://google.co.jp|Click here>` : `Failed`
               }]
             }
         env:

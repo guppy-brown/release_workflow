@@ -1,0 +1,42 @@
+name: Release Tag
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get version
+        id: get_version
+        run: |
+          release_branch=${{ github.event.pull_request.head.ref }}
+          echo ::set-output name=version::${HEAD_REF#release/}
+      - name: Create History
+        id: create_history
+        run: |
+          release_branch=${{ github.event.pull_request.head.ref }}
+          git checkout -b ${release_branch} origin/${release_branch}
+          log=`git log --merges --pretty=format:'%s (@%an)' --date=relative "main...${release_branch}"`
+          echo "::set-output name=log::${log}"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          release_name: v${{ steps.get_version.outputs.version }}
+          body: |+
+            ## Executed command
+            \`git log --merges --pretty=format:'%s (@%an)' --date=relative main...${release_branch}\`
+            ## Command result
+            ${{ steps.create_history.outputs.log }}
+          draft: false
+          prerelease: true

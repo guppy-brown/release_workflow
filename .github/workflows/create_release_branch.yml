@@ -67,7 +67,7 @@ jobs:
               --message "${{ steps.create_history.outputs.log }}"
       - name: test
         run: |
-          hub pr show -f "%U"
+          hub pr show -u
       - name: Slack Nofitifaction
         uses: 8398a7/action-slack@v3
         with:

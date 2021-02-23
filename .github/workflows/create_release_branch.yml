@@ -1,6 +1,6 @@
 name: Create Release Branch
 
-on: 
+on:
   workflow_dispatch:
   schedule:
   # every friday at AM11:00
@@ -69,7 +69,7 @@ jobs:
         run: |
           hub show -f %U
       - name: Slack Nofitifaction
-      - uses: 8398a7/action-slack@v3
+        uses: 8398a7/action-slack@v3
         with:
           status: custom
           custom_payload: |

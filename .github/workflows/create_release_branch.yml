@@ -66,6 +66,9 @@ jobs:
               --message "## Command result" \
               --message "${{ steps.create_history.outputs.log }}"
       - name: test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           hub pr show -u
       - name: Slack Nofitifaction

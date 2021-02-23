@@ -22,22 +22,22 @@ jobs:
         id: get_cur_ver
         run: |
           ver=`git tag --sort=-v:refname | head -n 1`
-          echo "::set-output name=version::${ver}"
+          echo "::set-output name=version::${ver#v}"
       - name: Bump version
         id: bump_version
         uses: christian-draeger/increment-semantic-version@1.0.2
         with:
-          current-version: ${{ steps.get_cur_ver.outputs.version#v }}
+          current-version: ${{ steps.get_cur_ver.outputs.version }}
           version-fragment: 'feature'
       - name: Create Release Branch
         run: |
-          release_branch=release/${{ steps.bump_version.outputs.next-version }}
+          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           git checkout -b ${release_branch}
           git push origin ${release_branch}
       - name: Create History
         id: create_history
         run: |
-          release_branch=release/${{ steps.bump_version.outputs.next-version }}
+          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           git checkout -b main origin/main
           cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"main...${release_branch}\""
           log=`eval ${cmd}`
@@ -45,7 +45,7 @@ jobs:
           echo "::set-output name=log::${log}"
       - name: Create Pull Request
         run: |
-          release_branch=release/${{ steps.bump_version.outputs.next-version }}
+          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           hub pull-request \
               --base main \
               --head ${release_branch} \

@@ -20,9 +20,10 @@ jobs:
       - name: Create History
         id: create_history
         run: |
-          release_branch=${{ github.event.pull_request.head.ref }}
-          git checkout -b ${release_branch} origin/${release_branch}
-          log=`git log --merges --pretty=format:'%s (@%an)' --date=relative "main...${release_branch}"`
+          prev_ver=`git tag --sort=-v:refname | head -n 1
+          cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"${prev_ver}...main\""
+          log=`eval ${cmd}`
+          echo "::set-output name=cmd::${cmd}"
           echo "::set-output name=log::${log}"
       - name: Create Release
         id: create_release
@@ -35,7 +36,7 @@ jobs:
           release_name: v${{ steps.get_version.outputs.version }}
           body: |+
             ## Executed command
-            \`git log --merges --pretty=format:'%s (@%an)' --date=relative main...${release_branch}\`
+            \`${{ steps.create_history.outputs.cmd }}\`
             ## Command result
             ${{ steps.create_history.outputs.log }}
           draft: false

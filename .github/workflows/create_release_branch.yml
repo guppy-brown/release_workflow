@@ -49,6 +49,7 @@ jobs:
           echo "::set-output name=cmd::${cmd}"
           echo "::set-output name=log::${log}"
       - name: Create Pull Request
+        id: create_pull_request
         env:
           RELEASE_BRANCH: release/v${{ steps.bump_version.outputs.next-version }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -65,12 +66,7 @@ jobs:
               --message "\`${{ steps.create_history.outputs.cmd }}\`" \
               --message "## Command result" \
               --message "${{ steps.create_history.outputs.log }}"
-      - name: test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        run: |
-          hub pr show -u
+          echo "::set-output name=url::`hub pr show -u`"
       - name: Slack Nofitifaction
         uses: 8398a7/action-slack@v3
         with:
@@ -79,8 +75,7 @@ jobs:
             {
               attachments: [{
                 color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                text: '${{ job.status }}' === 'success' ? 'good' : `Created release PR! <https://google.co.jp|Click here>` : `Failed`
-              }]
+                text: `Created release PR! <${{ steps.create_pull_request.outputs.url }}|Click here>`
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

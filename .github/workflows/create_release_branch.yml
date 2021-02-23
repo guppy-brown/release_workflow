@@ -15,9 +15,12 @@ jobs:
           ref: develop
           fetch-depth: 0
       - name: Setup git config
+        ENV:
+          USER_NAME: "GitHub Actions"
+          USER_MAIL: noreply@github.com
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email noreply@github.com
+          git config user.name ${USER_NAME}
+          git config user.email ${USER_MAIL}
       - name: Get current version
         id: get_cur_ver
         run: |
@@ -30,25 +33,30 @@ jobs:
           current-version: ${{ steps.get_cur_ver.outputs.version }}
           version-fragment: 'feature'
       - name: Create Release Branch
+        env:
+          RELEASE_BRANCH: release/v${{ steps.bump_version.outputs.next-version }}
         run: |
-          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
-          git checkout -b ${release_branch}
-          git push origin ${release_branch}
+          git checkout -b ${RELEASE_BRANCH}
+          git push origin ${RELEASE_BRANCH}
       - name: Create History
         id: create_history
+        env:
+          RELEASE_BRANCH: release/v${{ steps.bump_version.outputs.next-version }}
         run: |
-          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
-          git checkout -b main origin/main
-          cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"main...${release_branch}\""
+          git fetch -b origin main
+          cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"main...${RELEASE_BRANCH}\""
           log=`eval ${cmd}`
           echo "::set-output name=cmd::${cmd}"
           echo "::set-output name=log::${log}"
       - name: Create Pull Request
+        env:
+          RELEASE_BRANCH: release/v${{ steps.bump_version.outputs.next-version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
-          release_branch=release/v${{ steps.bump_version.outputs.next-version }}
           hub pull-request \
               --base main \
-              --head ${release_branch} \
+              --head ${RELEASE_BRANCH} \
               --reviewer guppy-brown \
               --assign guppy-brown \
               --labels ":rocket: release" \
@@ -57,7 +65,20 @@ jobs:
               --message "\`${{ steps.create_history.outputs.cmd }}\`" \
               --message "## Command result" \
               --message "${{ steps.create_history.outputs.log }}"
+      - name: test
+        run: |
+          hub show -f %U
+      - name: Slack Nofitifaction
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: '${{ job.status }}' === 'success' ? 'good' : `Created release PR! <https://google.co.jp|Click here>` : `Failed`
+              }]
+            }
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always() # Pick up events even if the job fails or is canceled.

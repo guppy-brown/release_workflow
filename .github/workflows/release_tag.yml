@@ -20,7 +20,7 @@ jobs:
       - name: Create History
         id: create_history
         run: |
-          prev_ver=`git tag --sort=-v:refname | head -n 1
+          prev_ver=`git tag --sort=-v:refname | head -n 1`
           cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"${prev_ver}...main\""
           log=`eval ${cmd}`
           echo "::set-output name=cmd::${cmd}"

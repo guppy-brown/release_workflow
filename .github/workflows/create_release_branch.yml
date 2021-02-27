@@ -73,7 +73,7 @@ jobs:
           status: custom
           custom_payload: |
             {
-              text: 'Create Release Job has been executed.'
+              text: 'Create Release Job has been executed.',
               attachments: [{
                 color: 'failure',
                 text: `:innocent::innocent::innocent: Failed the job :innocent::innocent::innocent:`,
@@ -88,7 +88,7 @@ jobs:
           status: custom
           custom_payload: |
             {
-              text: 'Create Release Job has been executed.'
+              text: 'Create Release Job has been executed.',
               attachments: [{
                 color: 'success',
                 text: `:tada::tada::tada: Succeeded the job. Release PR is <${{ steps.create_pull_request.outputs.url }}|here> :tada::tada::tada:`,

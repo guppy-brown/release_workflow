@@ -73,11 +73,27 @@ jobs:
           status: custom
           custom_payload: |
             {
+              text: 'Create Release Job has been executed.'
               attachments: [{
-                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-                text: `Created release PR! <${{ steps.create_pull_request.outputs.url }}|Click here>`,
+                color: 'failure',
+                text: `:innocent::innocent::innocent: Failed the job :innocent::innocent::innocent:`,
               }]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always() # Pick up events even if the job fails or is canceled.
+        if: failure()
+      - name: Slack Nofitifaction
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text: 'Create Release Job has been executed.'
+              attachments: [{
+                color: 'success',
+                text: `:tada::tada::tada: Succeeded the job. Release PR is <${{ steps.create_pull_request.outputs.url }}|here> :tada::tada::tada:`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: success()

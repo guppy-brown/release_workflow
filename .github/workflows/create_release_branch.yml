@@ -73,10 +73,10 @@ jobs:
           status: custom
           custom_payload: |
             {
-              text: 'Create Release Job has been executed.',
+              text: 'Create Release Workflow has been executed :robot_face:',
               attachments: [{
                 color: 'failure',
-                text: `:innocent::innocent::innocent: Failed the job :innocent::innocent::innocent:`,
+                text: `:innocent::innocent::innocent: Failed the Workflow :innocent::innocent::innocent:`,
               }]
             }
         env:
@@ -88,10 +88,10 @@ jobs:
           status: custom
           custom_payload: |
             {
-              text: 'Create Release Job has been executed.',
+              text: 'Create Release Workflow has been executed :robot_face:',
               attachments: [{
                 color: 'success',
-                text: `:tada::tada::tada: Succeeded the job. Release PR is <${{ steps.create_pull_request.outputs.url }}|here> :tada::tada::tada:`,
+                text: `:tada::tada::tada: Succeeded the Workflow. Release PR is <${{ steps.create_pull_request.outputs.url }}|here> :tada::tada::tada:`,
               }]
             }
         env:

@@ -16,15 +16,14 @@ jobs:
           fetch-depth: 0
       - name: Get version
         id: get_version
+        env:
+          MERGED_BRANCH: ${{ github.event.pull_request.head.ref }}
         run: |
-          release_branch=${{ github.event.pull_request.head.ref }}
-          echo ::set-output name=version::${release_branch#release/}
+          echo ::set-output name=version::${MERGED_BRANCH#release/}
       - name: Create History
         id: create_history
         run: |
           prev_ver=`git tag --sort=-v:refname | head -n 1`
-          git tag
-          echo ${prev_ver}
           cmd="git log --merges --pretty=format:'%s (@%an)' --date=relative \"${prev_ver}...main\""
           log=`eval ${cmd}`
           echo "::set-output name=cmd::${cmd}"
@@ -35,9 +34,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          VERSION: ${{ steps.get_version.outputs.version }}
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: ${{ steps.get_version.outputs.version }}
+          tag_name: ${VERSION}
+          release_name: ${VERSION}
           body: |+
             ## Executed command
             `${{ steps.create_history.outputs.cmd }}`
@@ -45,3 +45,37 @@ jobs:
             ${{ steps.create_history.outputs.log }}
           draft: false
           prerelease: true
+      - name: Slack Nofitifaction
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              icon_emoji: ':rocket:',
+              text: 'Release Tag Workflow has been executed :robot_face:',
+              attachments: [{
+                color: 'danger',
+                text: `Failed the Workflow :innocent::innocent::innocent:`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()
+      - name: Slack Nofitifaction
+        uses: 8398a7/action-slack@v3
+        env:
+          URL: https://github.com/guppy-brown/release_workflow/releases/tag/${{ steps.get_version.outputs.version }}
+        with:
+          status: custom
+          custom_payload: |
+            {
+              icon_emoji: ':rocket:',
+              text: 'Release Tag Workflow has been executed :robot_face:',
+              attachments: [{
+                color: 'good',
+                text: `Succeeded the Workflow. Release is <${URL}|here> :tada::tada::tada:`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: success()

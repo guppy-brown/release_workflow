@@ -52,16 +52,18 @@ jobs:
         id: create_pull_request
         env:
           RELEASE_BRANCH: release/v${{ steps.bump_version.outputs.next-version }}
+          ASSIGNEE: guppy-brown
+          REVIEWER: guppy-brown
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           hub pull-request \
               --base main \
               --head ${RELEASE_BRANCH} \
-              --reviewer guppy-brown \
-              --assign guppy-brown \
+              --reviewer ${REVIEWER} \
+              --assign ${ASSIGNEE} \
               --labels ":rocket: release" \
-              --message "Release/${{ steps.bump_version.outputs.next-version }}" \
+              --message "Release/v${{ steps.bump_version.outputs.next-version }}" \
               --message "## Executed command" \
               --message "\`${{ steps.create_history.outputs.cmd }}\`" \
               --message "## Command result" \
@@ -73,10 +75,10 @@ jobs:
           status: custom
           custom_payload: |
             {
+              icon_emoji: ':rocket:',
               text: 'Create Release Workflow has been executed :robot_face:',
               attachments: [{
-                color: 'failure',
-                text: `:innocent::innocent::innocent: Failed the Workflow :innocent::innocent::innocent:`,
+                color: 'Failed the Workflow :innocent::innocent::innocent:`,
               }]
             }
         env:
@@ -88,10 +90,11 @@ jobs:
           status: custom
           custom_payload: |
             {
+              icon_emoji: ':rocket:',
               text: 'Create Release Workflow has been executed :robot_face:',
               attachments: [{
-                color: 'success',
-                text: `:tada::tada::tada: Succeeded the Workflow. Release PR is <${{ steps.create_pull_request.outputs.url }}|here> :tada::tada::tada:`,
+                color: 'good',
+                text: `Succeeded the Workflow. Release PR is <${{ steps.create_pull_request.outputs.url }}|here> :tada::tada::tada:`,
               }]
             }
         env:

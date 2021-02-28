@@ -34,7 +34,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          VERSION: v${{ steps.get_version.outputs.version }}
+          VERSION: ${{ steps.get_version.outputs.version }}
         with:
           tag_name: ${VERSION}
           release_name: ${VERSION}
@@ -45,3 +45,37 @@ jobs:
             ${{ steps.create_history.outputs.log }}
           draft: false
           prerelease: true
+      - name: Slack Nofitifaction
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              icon_emoji: ':rocket:',
+              text: 'Release Tag Workflow has been executed :robot_face:',
+              attachments: [{
+                color: 'danger',
+                text: `Failed the Workflow :innocent::innocent::innocent:`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()
+      - name: Slack Nofitifaction
+        uses: 8398a7/action-slack@v3
+        env:
+          URL: https://github.com/guppy-brown/release_workflow/releases/tag/${{ steps.get_version.outputs.version }}
+        with:
+          status: custom
+          custom_payload: |
+            {
+              icon_emoji: ':rocket:',
+              text: 'Release Tag Workflow has been executed :robot_face:',
+              attachments: [{
+                color: 'good',
+                text: `Succeeded the Workflow. Release is <${URL}|here> :tada::tada::tada:`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: success()

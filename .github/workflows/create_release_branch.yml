@@ -70,7 +70,10 @@ jobs:
               --message "${{ steps.create_history.outputs.log }}"
           echo "::set-output name=url::`hub pr show -u`"
       - name: Slack Nofitifaction
+        if: failure()
         uses: 8398a7/action-slack@v3
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           status: custom
           custom_payload: |
@@ -81,11 +84,11 @@ jobs:
                 color: 'Failed the Workflow :innocent::innocent::innocent:`,
               }]
             }
+      - name: Slack Nofitifaction
+        if: success()
+        uses: 8398a7/action-slack@v3
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: failure()
-      - name: Slack Nofitifaction
-        uses: 8398a7/action-slack@v3
         with:
           status: custom
           custom_payload: |
@@ -97,6 +100,3 @@ jobs:
                 text: `Succeeded the Workflow. Release PR is <${{ steps.create_pull_request.outputs.url }}|here> :tada::tada::tada:`,
               }]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: success()

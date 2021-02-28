@@ -34,10 +34,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          VERSION: ${{ steps.get_version.outputs.version }}
         with:
-          tag_name: ${VERSION}
-          release_name: ${VERSION}
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: ${{ steps.get_version.outputs.version }}
           body: |+
             ## Executed command
             `${{ steps.create_history.outputs.cmd }}`
@@ -66,7 +65,6 @@ jobs:
         uses: 8398a7/action-slack@v3
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          URL: https://github.com/guppy-brown/release_workflow/releases/tag/${{ steps.get_version.outputs.version }}
         with:
           status: custom
           custom_payload: |
@@ -75,6 +73,6 @@ jobs:
               text: 'Release Tag Workflow has been executed :robot_face:',
               attachments: [{
                 color: 'good',
-                text: `Succeeded the Workflow. Release is <${URL}|here> :tada::tada::tada:`,
+                text: `Succeeded the Workflow. Release is <https://github.com/guppy-brown/release_workflow/releases/tag/${{ steps.get_version.outputs.version }}|here> :tada::tada::tada:`,
               }]
             }

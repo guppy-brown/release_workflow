@@ -46,7 +46,10 @@ jobs:
           draft: false
           prerelease: true
       - name: Slack Nofitifaction
+        if: failure()
         uses: 8398a7/action-slack@v3
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           status: custom
           custom_payload: |
@@ -58,12 +61,11 @@ jobs:
                 text: `Failed the Workflow :innocent::innocent::innocent:`,
               }]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: failure()
       - name: Slack Nofitifaction
+        if: success()
         uses: 8398a7/action-slack@v3
         env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           URL: https://github.com/guppy-brown/release_workflow/releases/tag/${{ steps.get_version.outputs.version }}
         with:
           status: custom
@@ -76,6 +78,3 @@ jobs:
                 text: `Succeeded the Workflow. Release is <${URL}|here> :tada::tada::tada:`,
               }]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: success()

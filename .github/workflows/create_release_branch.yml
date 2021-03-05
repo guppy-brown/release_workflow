@@ -81,7 +81,7 @@ jobs:
               icon_emoji: ':rocket:',
               text: 'Create Release Workflow has been executed :robot_face:',
               attachments: [{
-                color: 'Failed the Workflow :innocent::innocent::innocent:`,
+                color: `Failed the Workflow :innocent::innocent::innocent:`,
               }]
             }
       - name: Slack Nofitifaction
